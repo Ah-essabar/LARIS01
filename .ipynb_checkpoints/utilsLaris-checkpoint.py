@@ -88,9 +88,9 @@ def outliersToNan(data):
 
 
 
-def seperateGrandeurs(df,grandeurs = {"temperature": [],"co2": [],"humidity": [],"sound": [],"tvoc": []}):
+def seperateGrandeurs(df):
     colonnesName=df.columns
-    #grandeurs = {"temperature": [],"co2": [],"humidity": [],"sound": [],"tvoc": []}
+    grandeurs = {"temperature": [],"co2": [],"humidity": [],"sound": [],"tvoc": []}
     for grandeurs_key in  grandeurs:
         for name in colonnesName:            
             if name.find(grandeurs_key)==0:

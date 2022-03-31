@@ -29,7 +29,7 @@ def separteSensors(data, filename, save=False):
 ## fusion des données par master and all
 def dataFusion(dictSensors, salle=219):
     '''merging of data by Master and all
-ex: df1,df2,df3,df4,df = dataFusion(dictSensors, room=219)
+    ex: df1,df2,df3,df4,df = dataFusion(dictSensors, room=219)
     salle = int(salle)'''
     if salle == 219:
         dict=dictSensors.copy()
@@ -62,7 +62,7 @@ ex: df1,df2,df3,df4,df = dataFusion(dictSensors, room=219)
 
 def resampleSensors(dictSensors,period='5T'):
     ''' 
-This function makes it possible to aggregate the data according to a given period (5T: for 5 min)'''
+    This function makes it possible to aggregate the data according to a given period (5T: for 5 min)'''
     dict=dictSensors.copy()
     for cle, valeur in dict.items():       
         sensortemp = valeur.resample(period).mean()
@@ -73,7 +73,7 @@ This function makes it possible to aggregate the data according to a given perio
 
 
 def outliersToNan(data):
-   ''' This function replaces outliers with np.nan'''
+    ''' This function replaces outliers with np.nan'''
     import numpy as np
     outlier_temp = np.where((data['temperature'] >= (60)) ) # 60°C
     outlier_humidity = np.where(data['humidity'] >= (100)) # 100 %
@@ -94,8 +94,9 @@ def outliersToNan(data):
 
 
 
-def seperateGrandeurs(df,grandeurs = {"temperature":,"co2":,"humidity":,"sound":,"tvoc":}):
+def seperateGrandeurs(df,grandeurs = ["temperature","co2","humidity","sound","tvoc"]):
     '''This function separates the data of a dataFrame by garndeur defined in the variable grandeurs. To call this function use grandeursTemp = seperateGrandeurs(df,grandeurs = {"temperature":,"co2":,"humidity":,"sound":,"tvoc":}).'''
+    grandeurs = {grandeurs[i]: [] for i in range(len(grandeurs))}
     grandeursTemp=grandeurs.copy()
     for grandeursTemp_key in  grandeursTemp:
         grandeursTemp[grandeursTemp_key] = []        
@@ -106,8 +107,4 @@ def seperateGrandeurs(df,grandeurs = {"temperature":,"co2":,"humidity":,"sound":
             if name.find(grandeursTemp_key)==0:
                 grandeursTemp[grandeursTemp_key].append(name)
                 
-    return grandeursTemp     
-    
-    
-    
-    
+    return grandeursTemp

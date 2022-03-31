@@ -1,11 +1,12 @@
 def separteSensors(data, filename, save=False):
+    '''
+    this function separates the data for a room, dataframs are created by sensor in the form of a dictionary. the call to the separteSensors(data, filename, save=False) function: filename is the name  to save the dictionary if save is True'''
     import pandas as pd
     import numpy as np
     # Number of sensors
     nb_sensors = len(pd.unique(data['sensor'])) 
     sensors_list = data.sensor.unique()
     print("We have ",nb_sensors," sensors. Their Id are ", [i_sensor for i,i_sensor in enumerate(sensors_list)])
-
     # Separate each sensor data and create a dictionary for all sensors 
     # the dataframe of each senor can be extracted from dictionary ex : DataSensors["sensor_100"]
     DataSensors={}
@@ -27,7 +28,9 @@ def separteSensors(data, filename, save=False):
 
 ## fusion des données par master and all
 def dataFusion(dictSensors, salle=219):
-    salle = int(salle)
+    '''merging of data by Master and all
+ex: df1,df2,df3,df4,df = dataFusion(dictSensors, room=219)
+    salle = int(salle)'''
     if salle == 219:
         dict=dictSensors.copy()
         dfs =[dict['sensor_100'],dict['sensor_101'],dict['sensor_102'], dict['sensor_103']]
@@ -58,6 +61,8 @@ def dataFusion(dictSensors, salle=219):
 
 
 def resampleSensors(dictSensors,period='5T'):
+    ''' 
+This function makes it possible to aggregate the data according to a given period (5T: for 5 min)'''
     dict=dictSensors.copy()
     for cle, valeur in dict.items():       
         sensortemp = valeur.resample(period).mean()
@@ -67,7 +72,8 @@ def resampleSensors(dictSensors,period='5T'):
 
 
 
-def outliersToNan(data):     
+def outliersToNan(data):
+   ''' This function replaces outliers with np.nan'''
     import numpy as np
     outlier_temp = np.where((data['temperature'] >= (60)) ) # 60°C
     outlier_humidity = np.where(data['humidity'] >= (100)) # 100 %
@@ -88,9 +94,8 @@ def outliersToNan(data):
 
 
 
-def seperateGrandeurs(df,grandeurs = {"temperature": [],"co2": [],"humidity": [],"sound": [],"tvoc": []}):
-    '''Demonstrates triple double quotes
-    docstrings and does nothing really.'''
+def seperateGrandeurs(df,grandeurs = {"temperature":,"co2":,"humidity":,"sound":,"tvoc":}):
+    '''This function separates the data of a dataFrame by garndeur defined in the variable grandeurs. To call this function use grandeursTemp = seperateGrandeurs(df,grandeurs = {"temperature":,"co2":,"humidity":,"sound":,"tvoc":}).'''
     grandeursTemp=grandeurs.copy()
     for grandeursTemp_key in  grandeursTemp:
         grandeursTemp[grandeursTemp_key] = []        

@@ -1,3 +1,4 @@
+import janitor
 def separteSensors(data, filename, save=False):
     '''
     this function separates the data for a room, dataframs are created by sensor in the form of a dictionary. the call to the separteSensors(data, filename, save=False) function: filename is the name  to save the dictionary if save is True'''

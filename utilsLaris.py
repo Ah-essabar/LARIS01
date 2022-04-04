@@ -8,7 +8,6 @@ import janitor
 import wget
 import os
 import ipywidgets as widgets
-%matplotlib widget
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

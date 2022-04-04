@@ -1,19 +1,3 @@
-
-#!pip install ipympl
-# importing sys
-#!pip install wget
-#!pip install pyjanitor
-# download utilsLaris form github
-import janitor
-import wget
-import os
-import ipywidgets as widgets
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-import seaborn as sns
-
 def separteSensors(data, filename, save=False):
     '''
     this function separates the data for a room, dataframs are created by sensor in the form of a dictionary. the call to the separteSensors(data, filename, save=False) function: filename is the name  to save the dictionary if save is True'''

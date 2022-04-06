@@ -60,15 +60,25 @@ def dataFusion(dictSensors, salle=219):
     
 
 
-def resampleSensors(dictSensors,period='5T'):
+def resampleSensors(dictSensors,period='5T',categorical = False):
     ''' 
     This function makes it possible to aggregate the data according to a given period (5T: for 5 min)'''
-    dict=dictSensors.copy()
-    for cle, valeur in dict.items():       
-        sensortemp = valeur.resample(period).mean()
-        dictTemp= {cle: sensortemp }
-        dict.update(dictTemp) 
-    return dict
+    if categorical :
+        dict=dictSensors.copy()
+        for cle, valeur in dict.items():       
+            sensortemp = valeur.resample(period)
+            sensortemp = sensortemp.bfill()
+            dictTemp= {cle: sensortemp }
+            dict.update(dictTemp) 
+        return dict
+
+    else :
+        dict=dictSensors.copy()
+        for cle, valeur in dict.items():       
+            sensortemp = valeur.resample(period).mean()
+            dictTemp= {cle: sensortemp }
+            dict.update(dictTemp) 
+        return dict
 
 
 

@@ -147,11 +147,12 @@ def importData():
     wget.download("https://biot.u-angers.fr/s114.php")
     wget.download("https://biot.u-angers.fr/shelly.php")
 
-    for salle in ["s114",'s219']:
+    for salle in ["s114",'s219', 'shelly']:
         #raw_data = pd.read_csv("test.txt", sep=";")
         sallePhp = salle
         raw_data = pd.read_csv(sallePhp+".php", sep=";")
-        data,outliers = outliersToNan(raw_data)
+        if sallePhp != 'shelly':
+            data,outliers = outliersToNan(raw_data)
         # Separate sensors and save as dictionary
         filename = sallePhp
         # separteSensors(data, filename, save=False)

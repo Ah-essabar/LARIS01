@@ -153,6 +153,8 @@ def importData():
         raw_data = pd.read_csv(sallePhp+".php", sep=";")
         if sallePhp != 'shelly':
             data,outliers = outliersToNan(raw_data)
+        else :
+            data = raw_data
         # Separate sensors and save as dictionary
         filename = sallePhp
         # separteSensors(data, filename, save=False)

@@ -1,8 +1,12 @@
+import pandas as pd
+import numpy as np
+import os
+import wget
+
 def separteSensors(data, filename, save=False):
     '''
     this function separates the data for a room, dataframs are created by sensor in the form of a dictionary. the call to the separteSensors(data, filename, save=False) function: filename is the name  to save the dictionary if save is True'''
-    import pandas as pd
-    import numpy as np
+    
     # Number of sensors
     nb_sensors = len(pd.unique(data['sensor'])) 
     sensors_list = data.sensor.unique()
@@ -60,21 +64,30 @@ def dataFusion(dictSensors, salle=219):
     
 
 
-def resampleSensors(dictSensors,period='5T'):
+def resampleSensors(dictSensors,period='5T',categorical = False):
     ''' 
     This function makes it possible to aggregate the data according to a given period (5T: for 5 min)'''
-    dict=dictSensors.copy()
-    for cle, valeur in dict.items():       
-        sensortemp = valeur.resample(period).mean()
-        dictTemp= {cle: sensortemp }
-        dict.update(dictTemp) 
-    return dict
+    if categorical :
+        dict=dictSensors.copy()
+        for cle, valeur in dict.items():       
+            sensortemp = valeur.resample(period)
+            sensortemp = sensortemp.bfill()
+            dictTemp= {cle: sensortemp }
+            dict.update(dictTemp) 
+        return dict
+
+    else :
+        dict=dictSensors.copy()
+        for cle, valeur in dict.items():       
+            sensortemp = valeur.resample(period).mean()
+            dictTemp= {cle: sensortemp }
+            dict.update(dictTemp) 
+        return dict
 
 
 
 def outliersToNan(data):
     ''' This function replaces outliers with np.nan'''
-    import numpy as np
     outlier_temp = np.where((data['temperature'] >= (60)) ) # 60°C
     outlier_humidity = np.where(data['humidity'] >= (100)) # 100 %
     outlier_tvoc = np.where(data['tvoc'] >= (10000)) # 10 000 ppb
@@ -122,3 +135,27 @@ def df_column_uniquify(df):
         new_columns.append(newitem)
     df.columns = new_columns
     return df
+
+def importData():    
+    if os.path.isfile("s114.php")==True:
+        os. remove("s114.php")
+    if os.path.isfile("s219.php")==True:
+        os. remove("s219.php")
+    if os.path.isfile("shelly.php")==True:
+        os. remove("shelly.php")    
+    wget.download("https://biot.u-angers.fr/s219.php")
+    wget.download("https://biot.u-angers.fr/s114.php")
+    wget.download("https://biot.u-angers.fr/shelly.php")
+
+    for salle in ["s114",'s219', 'shelly']:
+        #raw_data = pd.read_csv("test.txt", sep=";")
+        sallePhp = salle
+        raw_data = pd.read_csv(sallePhp+".php", sep=";")
+        if sallePhp != 'shelly':
+            data,outliers = outliersToNan(raw_data)
+        else :
+            data = raw_data
+        # Separate sensors and save as dictionary
+        filename = sallePhp
+        # separteSensors(data, filename, save=False)
+        DataSensors = separteSensors(data,filename, save = True )

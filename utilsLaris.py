@@ -158,4 +158,4 @@ def importData():
         # Separate sensors and save as dictionary
         filename = sallePhp
         # separteSensors(data, filename, save=False)
-        DataSensors = separteSensors(data,filename, True )
+        DataSensors = separteSensors(data,filename, save = True )

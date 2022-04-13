@@ -1,4 +1,13 @@
-A) configuration de git et github: 
+A) Usage de git
+   avant de modifier le projet : 
+   git pull   : pour récupérer le depo distant
+   aprés modification du projet,  on peut transmettre les modifs sur github avec les commandes suivantes :
+       git add . 
+       git commit -m "information sur le commit"
+       git push
+
+
+B) configuration de git et github: 
 Dans un terminal sur le pc local :
 $ git config --global user.name "John Doe"
 $ git config --global user.email johndoe@example.com
@@ -13,10 +22,4 @@ afficher la clé sur le terminal
 cat ~/.ssh/id_rsa.pub
 la clé ssh à ajouter sur github : setting ...
 
-B) Usage de git
-   avant de modifier le projet : 
-   git pull   : pour récupérer le depo distant
-   aprés modification du projet,  on peut transmettre les modif sur github avec les commandes suivantes :
-       git add . 
-       git commit -m "information sur le commit"
-       git push
+

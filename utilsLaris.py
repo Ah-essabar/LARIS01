@@ -63,6 +63,21 @@ def dataFusion(dictSensors, salle=219):
         return df1,df2,df3,df4,df
     
 
+    #windows = pd.read_csv('windows',parse_dates=True, index_col='date')
+def resampleWindows(windows, period ='5T'):
+    
+    #a= windows.resample('5T',label='left', closed='left').bfill()
+    a = windows.resample(period,label='left', closed='left').bfill()
+    timestamp = a.index[1]-a.index[0]
+    for i in range(len(windows)-1):
+        dt = windows.index[i+1]-windows.index[i]
+        if dt > timestamp :
+            a[windows.index[i] : windows.index[i+1]] = windows.iloc[:,0][windows.index[i]]
+            b = a[windows.index[i] : windows.index[i+1]]
+            t= b.index[b.index.shape[0]-1].strftime("%Y-%m-%d %H:%M:%S")
+            a[t : t] = windows.iloc[:,0][windows.index[i+1]]
+    return a
+   
 
 def resampleSensors(dictSensors,period='5T',categorical = False):
     ''' 
@@ -70,8 +85,7 @@ def resampleSensors(dictSensors,period='5T',categorical = False):
     if categorical :
         dict=dictSensors.copy()
         for cle, valeur in dict.items():       
-            sensortemp = valeur.resample(period)
-            sensortemp = sensortemp.bfill()
+            sensortemp = resampleWindows(valeur, period = period)
             dictTemp= {cle: sensortemp }
             dict.update(dictTemp) 
         return dict

@@ -1,0 +1,22 @@
+A) configuration de git et github: 
+Dans un terminal sur le pc local :
+$ git config --global user.name "John Doe"
+$ git config --global user.email johndoe@example.com
+
+How to fix Git always asking for user credentials :
+  You can fix this by configuring Git to store your password for you.
+git remote set-url origin git@github.com:username/repo.git
+
+ssh key: 
+ssh-keygen -t rsa
+afficher la clé sur le terminal
+cat ~/.ssh/id_rsa.pub
+la clé ssh à ajouter sur github : setting ...
+
+B) Usage de git
+   avant de modifier le projet : 
+   git pull   : pour récupérer le depo distant
+   aprés modification du projet,  on peut transmettre les modif sur github avec les commandes suivantes :
+       git add . 
+       git commit -m "information sur le commit"
+       git push

@@ -31,7 +31,7 @@ def separteSensors(data, filename, save=False):
     
 
 ## fusion des données par master and all
-def dataFusion(dictSensors, salle=219):
+def dataFusionA(dictSensors, salle=219, all_df = False):
     '''merging of data by Master and all
     ex: df1,df2,df3,df4,df = dataFusion(dictSensors, room=219)
     salle = int(salle)'''
@@ -47,7 +47,7 @@ def dataFusion(dictSensors, salle=219):
         df4 = dfs[0].join(dfs[1:])
         dfs = [df1,df2,df3,df4]
         df = dfs[0].join(dfs[1:])
-        return df1,df2,df3,df4,df
+        
     if salle == 114:
         dict=dictSensors.copy()
         dfs =[dict['sensor_118'],dict['sensor_119'],dict['sensor_120']]
@@ -60,9 +60,28 @@ def dataFusion(dictSensors, salle=219):
         df4 = dfs[0].join(dfs[1:])
         dfs = [df1,df2,df3,df4]
         df = dfs[0].join(dfs[1:])
+        # return all df if all_df=True of not return juste df
+    if all_df:
         return df1,df2,df3,df4,df
+    else:
+        return df
     
 
+    #windows = pd.read_csv('windows',parse_dates=True, index_col='date')
+def resampleWindows(windows, period ='5T'):
+    
+    #a= windows.resample('5T',label='left', closed='left').bfill()
+    a = windows.resample(period,label='left', closed='left').bfill()
+    timestamp = a.index[1]-a.index[0]
+    for i in range(len(windows)-1):
+        dt = windows.index[i+1]-windows.index[i]
+        if dt > timestamp :
+            a[windows.index[i] : windows.index[i+1]] = windows.iloc[:,0][windows.index[i]]
+            b = a[windows.index[i] : windows.index[i+1]]
+            t= b.index[b.index.shape[0]-1].strftime("%Y-%m-%d %H:%M:%S")
+            a[t : t] = windows.iloc[:,0][windows.index[i+1]]
+    return a
+   
 
 def resampleSensors(dictSensors,period='5T',categorical = False):
     ''' 
@@ -70,8 +89,7 @@ def resampleSensors(dictSensors,period='5T',categorical = False):
     if categorical :
         dict=dictSensors.copy()
         for cle, valeur in dict.items():       
-            sensortemp = valeur.resample(period)
-            sensortemp = sensortemp.bfill()
+            sensortemp = resampleWindows(valeur, period = period)
             dictTemp= {cle: sensortemp }
             dict.update(dictTemp) 
         return dict
@@ -153,7 +171,9 @@ def importData():
         raw_data = pd.read_csv(sallePhp+".php", sep=";")
         if sallePhp != 'shelly':
             data,outliers = outliersToNan(raw_data)
+        else :
+            data = raw_data
         # Separate sensors and save as dictionary
         filename = sallePhp
         # separteSensors(data, filename, save=False)
-        DataSensors = separteSensors(data,filename, True )
+        DataSensors = separteSensors(data,filename, save = True )

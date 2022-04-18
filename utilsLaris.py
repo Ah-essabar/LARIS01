@@ -31,7 +31,7 @@ def separteSensors(data, filename, save=False):
     
 
 ## fusion des données par master and all
-def dataFusion(dictSensors, salle=219):
+def dataFusionA(dictSensors, salle=219, all_df = False):
     '''merging of data by Master and all
     ex: df1,df2,df3,df4,df = dataFusion(dictSensors, room=219)
     salle = int(salle)'''
@@ -47,7 +47,7 @@ def dataFusion(dictSensors, salle=219):
         df4 = dfs[0].join(dfs[1:])
         dfs = [df1,df2,df3,df4]
         df = dfs[0].join(dfs[1:])
-        return df1,df2,df3,df4,df
+        
     if salle == 114:
         dict=dictSensors.copy()
         dfs =[dict['sensor_118'],dict['sensor_119'],dict['sensor_120']]
@@ -60,7 +60,11 @@ def dataFusion(dictSensors, salle=219):
         df4 = dfs[0].join(dfs[1:])
         dfs = [df1,df2,df3,df4]
         df = dfs[0].join(dfs[1:])
+        # return all df if all_df=True of not return juste df
+    if all_df:
         return df1,df2,df3,df4,df
+    else:
+        return df
     
 
     #windows = pd.read_csv('windows',parse_dates=True, index_col='date')

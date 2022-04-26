@@ -185,6 +185,19 @@ def importData():
         # separteSensors(data, filename, save=False)
         DataSensors = separteSensors(data,filename, save = True )
         
+def readData(period='5T'):
+    tab=[]
+    for fileNpy in ["s114","s219","shelly"]:
+        filename = fileNpy+'.npy'    
+        dictionary = np.load(filename,allow_pickle='TRUE').item()
+        dictSensors = dictionary.copy()
+        dict = dictSensors .copy()
+        if fileNpy != "shelly" :
+            categorical = False
+        else :
+            categorical = True
+        tab.append(resampleSensors(dictSensors, period = period,categorical = categorical))
+    return tab
 
 def dataPreparationElec(data, period = "5T"):
     data = data.set_index("date") 

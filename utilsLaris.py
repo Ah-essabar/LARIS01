@@ -181,7 +181,7 @@ def importData():
         DataSensors = separteSensors(data,filename, save = True )
         
 
-def dataPreparationElec(data, period = period):
+def dataPreparationElec(data, period = "5T"):
     data = data.set_index("date") 
     data.index = pd.to_datetime(data.index)
     data = data.clean_names() # janitor

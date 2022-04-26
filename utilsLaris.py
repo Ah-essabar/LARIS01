@@ -3,6 +3,7 @@ import numpy as np
 import os
 import wget
 import glob
+import functools
 
 prefixFiles = {"ElecS219" :"S219*.csv","ElecS114" :"S114*.csv", "Weather" :"WeatherFile*.txt"}
 prefixFile = "ElecS219"
@@ -36,7 +37,7 @@ def separteSensors(data, filename, save=False):
     
 
 ## fusion des données par master and all
-def dataFusionA(dictSensors, salle=219, all_df = False):
+def dataFusionAmbiance(dictSensors, salle=219, all_df = False):
     '''merging of data by Master and all
     ex: df1,df2,df3,df4,df = dataFusion(dictSensors, room=219)
     salle = int(salle)'''
@@ -211,4 +212,15 @@ def mergeMultipleCSV_Files(dirctory="./Data", prefixFile = prefixFile):
     return df
         
         
-     
+
+def dataFusionAll(salle = 219):
+    if salle == 219 :
+        dfs=[ambianceData_219,weatherData]
+        shelly_sensors = shelly_219
+    if  salle == 114 :
+        dfs=[ambianceData_114,weatherData]
+        shelly_sensors = shelly_114 
+    for sensor_name in shelly_sensors: 
+        dfs.append(ResampledDict_shelly[sensor_name])
+    df = functools.reduce(lambda left,right: pd.merge(left,right,on='date'), dfs)
+    return df       

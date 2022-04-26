@@ -154,6 +154,7 @@ def df_column_uniquify(df):
     df.columns = new_columns
     return df
 
+
 def importData():    
     if os.path.isfile("s114.php")==True:
         os. remove("s114.php")
@@ -177,3 +178,23 @@ def importData():
         filename = sallePhp
         # separteSensors(data, filename, save=False)
         DataSensors = separteSensors(data,filename, save = True )
+        
+        
+def mergeMultipleCSV_Files(dirctory="./Data", prefixFile = prefixFile): 
+    # merging the files
+    joined_files = os.path.join(dirctory, prefixFile)
+    # A list of all joined files is returned
+    joined_list = glob.glob(joined_files)
+    # Finally, the files are joined
+    if prefixFile == "S219*.csv":
+        li_mapper = map(lambda filename: pd.read_csv(filename, sep=",", skiprows=(1),names = ['date','general_219_w', 'eclairage_219_w']),joined_list)
+    if prefixFile == "S114*.csv":
+        li_mapper = map(lambda filename: pd.read_csv(filename, sep=",", skiprows=(1),names =["date","Prises_114_W","General_114_W","Eclairage_114_W","Videoproj_114_W"]),joined_list)
+    if prefixFile == "WeatherFile*.txt" :
+        li_mapper = map(lambda filename: pd.read_csv(filename, sep="\t",skiprows=(1),parse_dates=[['Date','Time']],dayfirst=True),joined_list)
+    li_2 = list(li_mapper)
+    df = pd.concat(li_2, axis=0, ignore_index= True)
+    return df
+        
+        
+     

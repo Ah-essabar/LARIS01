@@ -213,14 +213,8 @@ def mergeMultipleCSV_Files(dirctory="./Data", prefixFile = prefixFile):
         
         
 
-def dataFusionAll(salle = 219):
-    if salle == 219 :
-        dfs=[ambianceData_219,weatherData]
-        shelly_sensors = shelly_219
-    if  salle == 114 :
-        dfs=[ambianceData_114,weatherData]
-        shelly_sensors = shelly_114 
+def dataFusionAll(dfs, shelly_sensors,ResampledDict_shelly):
     for sensor_name in shelly_sensors: 
         dfs.append(ResampledDict_shelly[sensor_name])
     df = functools.reduce(lambda left,right: pd.merge(left,right,on='date'), dfs)
-    return df       
+    return df         

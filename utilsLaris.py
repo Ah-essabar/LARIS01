@@ -179,7 +179,16 @@ def importData():
         # separteSensors(data, filename, save=False)
         DataSensors = separteSensors(data,filename, save = True )
         
-        
+
+def dataPreparationElec(data, period = period):
+    data = data.set_index("date") 
+    data.index = pd.to_datetime(data.index)
+    data = data.clean_names() # janitor
+    data.fillna(0,inplace=True)
+    data = data.resample(period).mean()
+    return data
+
+
 def mergeMultipleCSV_Files(dirctory="./Data", prefixFile = prefixFile): 
     # merging the files
     joined_files = os.path.join(dirctory, prefixFile)

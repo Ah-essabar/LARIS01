@@ -4,6 +4,10 @@ import os
 import wget
 import glob
 
+prefixFiles = {"ElecS219" :"S219*.csv","ElecS114" :"S114*.csv", "Weather" :"WeatherFile*.txt"}
+prefixFile = "ElecS219"
+
+
 def separteSensors(data, filename, save=False):
     '''
     this function separates the data for a room, dataframs are created by sensor in the form of a dictionary. the call to the separteSensors(data, filename, save=False) function: filename is the name  to save the dictionary if save is True'''

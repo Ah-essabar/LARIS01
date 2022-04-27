@@ -204,6 +204,7 @@ def dataPreparationElec(data, period = "5T"):
     data = data.set_index("date") 
     data.index = pd.to_datetime(data.index)
     data = data.clean_names() # janitor
+    data.columns="elec_"+data.columns
     data.fillna(0,inplace=True)
     data = data.resample(period).mean()
     return data

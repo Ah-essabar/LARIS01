@@ -216,6 +216,7 @@ def dataPreparationWeather(weatherData, period = "5T"):
     # df_column_uniquify : allows to have unique column names
     weatherData  = df_column_uniquify(weatherData )
     weatherData  = weatherData[['out','hum','bar_','rad_']]
+    weatherData.columns="weather_"+weatherData.columns
     weatherData  = weatherData .sort_index()
     # missing data in raw fil is coded as "---" . so we change this chaine by np.nan
     x = {'---':np.nan}

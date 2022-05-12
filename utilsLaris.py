@@ -6,13 +6,13 @@ import wget
 import glob
 import functools
 
-prefixFiles = {"ElecS219" :"S219*.csv","ElecS114" :"S114*.csv", "Weather" :"WeatherFile*.txt"}
+prefixFiles = {"ElecS219" :"S219*.csv","ElecS114" :"S114*.csv", "Weather" :"WeatherFile*.txt", "Ambiance114": "s114*.txt", "Ambiance219": "s219*.txt"}
 prefixFile = "ElecS219"
 
 
 def separteSensors(data, filename, save=False):
     '''
-    this function separates the data for a room, dataframs are created by sensor in the form of a dictionary. the call to the separteSensors(data, filename, save=False) function: filename is the name  to save the dictionary if save is True'''
+    this function separates the data for a room, dataframs are created by sensor in the form of a dictionary. the call to the separteSensors(data, filename, save=False) function: filename is the name  to save the dictionary if save is True''', 
     
     # Number of sensors
     nb_sensors = len(pd.unique(data['sensor'])) 
@@ -162,17 +162,25 @@ def df_column_uniquify(df):
     return df
 
 
-def importData():    
+def importData(annee ="2022", n_monthStart=2,n_monthEnd=5 ):    
     if os.path.isfile("s114.php")==True:
         os. remove("s114.php")
     if os.path.isfile("s219.php")==True:
         os. remove("s219.php")
     if os.path.isfile("shelly.php")==True:
-        os. remove("shelly.php")    
-    wget.download("https://biot.u-angers.fr/s219.php")
-    wget.download("https://biot.u-angers.fr/s114.php")
-    wget.download("https://biot.u-angers.fr/shelly.php")
-
+        os. remove("shelly.php")
+    wget.download("https://biot.u-angers.fr/shelly.php")    
+    for mois in range (n_monthStart,n_monthEnd+1):
+        wget.download("https://biot.u-angers.fr/data/s114/"+annee+"/"+str(mois), out="ImportedData/s114_"+annee+"_"+str(mois)+".txt")
+        wget.download("https://biot.u-angers.fr/data/s219/"+annee+"/"+str(mois), out="ImportedData/s219_"+annee+"_"+str(mois)+".txt")
+        print(mois)
+    print("start merging")    
+    df_114 = mergeMultipleCSV_Files(dirctory = "./ImportedData", prefixFile = prefixFiles["Ambiance114"])
+    #df_114.se_index("id", inplace = True)
+    df_114.to_csv("s114.php",  sep=';', index=False)
+    df_219 = mergeMultipleCSV_Files(dirctory = "./ImportedData", prefixFile = prefixFiles["Ambiance219"])
+    #df_219.se_index("id", inplace = True)
+    df_219.to_csv("s219.php", sep=';', index=False)
     for salle in ["s114",'s219', 'shelly']:
         #raw_data = pd.read_csv("test.txt", sep=";")
         sallePhp = salle
@@ -185,6 +193,7 @@ def importData():
         filename = sallePhp
         # separteSensors(data, filename, save=False)
         DataSensors = separteSensors(data,filename, save = True )
+        
         
 def readData(period='5T'):
     tab=[]
@@ -240,8 +249,10 @@ def mergeMultipleCSV_Files(dirctory="./Data", prefixFile = prefixFile):
         li_mapper = map(lambda filename: pd.read_csv(filename, sep=",", skiprows=(1),names =["date","Prises_114_W","General_114_W","Eclairage_114_W","Videoproj_114_W"]),joined_list)
     if prefixFile == "WeatherFile*.txt" :
         li_mapper = map(lambda filename: pd.read_csv(filename, sep="\t",skiprows=(1),parse_dates=[['Date','Time']],dayfirst=True),joined_list)
-    li_2 = list(li_mapper)
-    df = pd.concat(li_2, axis=0, ignore_index= True)
+    if prefixFile in ["s114*.txt", "s219*.txt"]: # merge data imported from BIot
+        li_mapper = map(lambda filename: pd.read_csv(filename, sep=";"),joined_list)        
+    li_2 = list(li_mapper)    
+    df = pd.concat(li_2, axis=0, ignore_index= True)        
     return df
         
         

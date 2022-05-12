@@ -169,6 +169,14 @@ def importData(annee ="2022", n_monthStart=2,n_monthEnd=5 ):
         os. remove("s219.php")
     if os.path.isfile("shelly.php")==True:
         os. remove("shelly.php")
+   #####################   Vider le dossier   ImportedData
+    py_files = glob.glob('./ImportedData/*.txt')
+    for py_file in py_files:
+        try:
+            os.remove(py_file)
+        except OSError as e:
+            print(f"Error:{ e.strerror}")
+    ###################################        
     wget.download("https://biot.u-angers.fr/shelly.php")    
     for mois in range (n_monthStart,n_monthEnd+1):
         wget.download("https://biot.u-angers.fr/data/s114/"+annee+"/"+str(mois), out="ImportedData/s114_"+annee+"_"+str(mois)+".txt")

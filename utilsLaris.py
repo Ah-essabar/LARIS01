@@ -98,7 +98,14 @@ def resampleSensors(dictSensors,period='5T',categorical = False):
     if categorical :
         dict=dictSensors.copy()
         for cle, valeur in dict.items():
-            ## Ajout de 2 lignes close
+            ## Ajout de une ligne close au début
+            data = [[valeur.index[0] - timedelta(days=25), "close"]]
+            # Create the pandas DataFrame
+            df1 = pd.DataFrame(data, columns=['date', valeur.columns[0]])
+            df1.set_index ('date', inplace= True)
+            df1.index=pd.DatetimeIndex(df1.index)
+            valeur = pd.concat([df1,valeur], ignore_index=False)
+            ## ajout 2 lignes at the end
             data = [[valeur.index[-1] + timedelta(minutes=1), "close"], [datetime.now(), "close"]]
             # Create the pandas DataFrame
             df1 = pd.DataFrame(data, columns=['date', valeur.columns[0]])

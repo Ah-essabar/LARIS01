@@ -214,7 +214,7 @@ def importData(annee ="2022", n_monthStart=2,n_monthEnd=5 ):
             data,outliers = outliersToNan(raw_data)
         else :
             data = raw_data
-            print(data.head())
+            #print(data.head())
         # Separate sensors and save as dictionary
         filename = sallePhp
         # separteSensors(data, filename, save=False)

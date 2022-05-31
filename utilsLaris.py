@@ -5,6 +5,8 @@ import os
 import wget
 import glob
 import functools
+from datetime import datetime
+from datetime import timedelta
 
 prefixFiles = {"ElecS219" :"S219*.csv","ElecS114" :"S114*.csv", "Weather" :"WeatherFile*.txt", "Ambiance114": "s114*.txt", "Ambiance219": "s219*.txt"}
 prefixFile = "ElecS219"
@@ -95,7 +97,15 @@ def resampleSensors(dictSensors,period='5T',categorical = False):
     This function makes it possible to aggregate the data according to a given period (5T: for 5 min)'''
     if categorical :
         dict=dictSensors.copy()
-        for cle, valeur in dict.items():       
+        for cle, valeur in dict.items():
+            ## Ajout de 2 lignes close
+            data = [[valeur.index[-1] + timedelta(minutes=1), "close"], [datetime.now(), "close"]]
+            # Create the pandas DataFrame
+            df1 = pd.DataFrame(data, columns=['date', valeur.columns[0]])
+            df1.set_index ('date', inplace= True)
+            df1.index=pd.DatetimeIndex(df1.index)
+            valeur = pd.concat([valeur,df1], ignore_index=False)
+            #print(valeur)
             sensortemp = resampleWindows(valeur, period = period)
             dictTemp= {cle: sensortemp }
             dict.update(dictTemp) 
@@ -197,6 +207,7 @@ def importData(annee ="2022", n_monthStart=2,n_monthEnd=5 ):
             data,outliers = outliersToNan(raw_data)
         else :
             data = raw_data
+            print(data.head())
         # Separate sensors and save as dictionary
         filename = sallePhp
         # separteSensors(data, filename, save=False)

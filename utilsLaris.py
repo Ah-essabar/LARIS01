@@ -98,15 +98,16 @@ def resampleSensors(dictSensors,period='5T',categorical = False, ShiftDaysWindow
     if categorical :
         dict=dictSensors.copy()
         for cle, valeur in dict.items():
-            ## Ajout de une ligne close au début
+            
             if fillWindows:
+                ## Ajout de une ligne close au début pour une date décaléee d'un nombre de jours "ShiftDaysWindowsToFill"
                 data = [[valeur.index[0] - timedelta(days=ShiftDaysWindowsToFill), "close"]]
                 # Create the pandas DataFrame
                 df1 = pd.DataFrame(data, columns=['date', valeur.columns[0]])
                 df1.set_index ('date', inplace= True)
                 df1.index=pd.DatetimeIndex(df1.index)
                 valeur = pd.concat([df1,valeur], ignore_index=False)
-                ## ajout 2 lignes at the end
+                ## ajout 2 lignes at the end avec une minite apres le dernier enregistrement et la date now
                 data = [[valeur.index[-1] + timedelta(minutes=1), "close"], [datetime.now(), "close"]]
                 # Create the pandas DataFrame
                 df1 = pd.DataFrame(data, columns=['date', valeur.columns[0]])

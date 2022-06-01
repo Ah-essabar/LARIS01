@@ -289,4 +289,23 @@ def dataFusionAll(dfs, shelly_sensors,ResampledDict_shelly):
     for sensor_name in shelly_sensors: 
         dfs.append(ResampledDict_shelly[sensor_name])
     df = functools.reduce(lambda left,right: pd.merge(left,right,on='date'), dfs)
-    return df         
+    return df
+
+
+def FeatureExtraction(X,y, period = '30T'):
+    max_ = X.resample(period).max()
+    max_.columns +="_max"
+    min_ = X.resample(period).min()
+    min_.columns +="_min"
+    mean_ = X.resample(period).mean()
+    mean_.columns +="_mean"
+    std_ = X.resample(period).std()
+    std_.columns +="_std"
+    sum_ = X.resample(period).sum()
+    sum_.columns +="_sum"
+    dfs=[max_,min_,mean_,std_, sum_]   
+    y = y.resample(period).mean()
+    # y1 =y1.values.ravel()     
+    df = functools.reduce(lambda left,right: pd.merge(left,right,on='date'), dfs)
+    X = df.copy()
+    return X,y

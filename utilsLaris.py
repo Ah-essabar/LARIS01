@@ -92,26 +92,27 @@ def resampleWindows(windows, period ='5T'):
     return a
    
 
-def resampleSensors(dictSensors,period='5T',categorical = False):
+def resampleSensors(dictSensors,period='5T',categorical = False, ShiftDaysWindowsToFill = 25, fillWindows = True):
     ''' 
     This function makes it possible to aggregate the data according to a given period (5T: for 5 min)'''
     if categorical :
         dict=dictSensors.copy()
         for cle, valeur in dict.items():
             ## Ajout de une ligne close au début
-            data = [[valeur.index[0] - timedelta(days=25), "close"]]
-            # Create the pandas DataFrame
-            df1 = pd.DataFrame(data, columns=['date', valeur.columns[0]])
-            df1.set_index ('date', inplace= True)
-            df1.index=pd.DatetimeIndex(df1.index)
-            valeur = pd.concat([df1,valeur], ignore_index=False)
-            ## ajout 2 lignes at the end
-            data = [[valeur.index[-1] + timedelta(minutes=1), "close"], [datetime.now(), "close"]]
-            # Create the pandas DataFrame
-            df1 = pd.DataFrame(data, columns=['date', valeur.columns[0]])
-            df1.set_index ('date', inplace= True)
-            df1.index=pd.DatetimeIndex(df1.index)
-            valeur = pd.concat([valeur,df1], ignore_index=False)
+            if fillWindows:
+                data = [[valeur.index[0] - timedelta(days=ShiftDaysWindowsToFill), "close"]]
+                # Create the pandas DataFrame
+                df1 = pd.DataFrame(data, columns=['date', valeur.columns[0]])
+                df1.set_index ('date', inplace= True)
+                df1.index=pd.DatetimeIndex(df1.index)
+                valeur = pd.concat([df1,valeur], ignore_index=False)
+                ## ajout 2 lignes at the end
+                data = [[valeur.index[-1] + timedelta(minutes=1), "close"], [datetime.now(), "close"]]
+                # Create the pandas DataFrame
+                df1 = pd.DataFrame(data, columns=['date', valeur.columns[0]])
+                df1.set_index ('date', inplace= True)
+                df1.index=pd.DatetimeIndex(df1.index)
+                valeur = pd.concat([valeur,df1], ignore_index=False)
             #print(valeur)
             sensortemp = resampleWindows(valeur, period = period)
             dictTemp= {cle: sensortemp }
@@ -221,7 +222,7 @@ def importData(annee ="2022", n_monthStart=2,n_monthEnd=5 ):
         DataSensors = separteSensors(data,filename, save = True )
         
         
-def readData(period='5T'):
+def readData(period='5T', ShiftDaysWindowsToFill=25,  fillWindows= True):
     tab=[]
     for fileNpy in ["s114","s219","shelly"]:
         filename = fileNpy+'.npy'    
@@ -232,7 +233,7 @@ def readData(period='5T'):
             categorical = False
         else :
             categorical = True
-        tab.append(resampleSensors(dictSensors, period = period,categorical = categorical))
+        tab.append(resampleSensors(dictSensors, period = period,categorical = categorical,ShiftDaysWindowsToFill = ShiftDaysWindowsToFill, fillWindows = fillWindows))
     return tab
 
 def dataPreparationElec(data, period = "5T"):

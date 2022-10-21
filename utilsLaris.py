@@ -136,7 +136,7 @@ def outliersToNan(data):
     outlier_humidity = np.where(data['humidity'] >= (100)) # 100 %
     outlier_tvoc = np.where(data['tvoc'] >= (10000)) # 10 000 ppb
     #outlier_light = np.where(data['light'] >= (100000)) # 10 000
-    outlier_light = np.where(data['light'] >= (65535)) # 10 000
+    outlier_light = np.where(data['light'] >= (1500)) # 10 000
     outlier_sound = np.where(data['sound'] >= (5000)) # 1 000
     outlier_co2 = np.where(data['co2'] >= (10000)) # 65535
     outliers = np.unique(np.concatenate((outlier_temp[0],outlier_humidity[0],outlier_tvoc[0],

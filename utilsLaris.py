@@ -52,7 +52,7 @@ def dataFusionAmbiance(dictSensors, salle=219, all_df = False):
         df2 = dfs[0].join(dfs[1:])
         dfs =[dict['sensor_108'],dict['sensor_109'],dict['sensor_110']]
         df3 = dfs[0].join(dfs[1:])
-        dfs =[dict['sensor_111'],dict['sensor_112']]#,dict['sensor_113']]
+        dfs =[dict['sensor_111'],dict['sensor_112']]
         df4 = dfs[0].join(dfs[1:])
         dfs = [df1,df2,df3,df4]
         df = dfs[0].join(dfs[1:])
